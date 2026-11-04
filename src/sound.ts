@@ -69,11 +69,3 @@ export function playClick(): void {
   oscillator.start(now);
   oscillator.stop(now + 0.06);
 }
-
-export function vibrate(): void {
-  try {
-    navigator.vibrate?.(200);
-  } catch {
-    // Not every browser has vibration, and that's fine.
-  }
-}

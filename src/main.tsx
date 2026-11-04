@@ -3,11 +3,9 @@ import '@mantine/core/styles/default-css-variables.css';
 import '@mantine/core/styles/global.css';
 import '@mantine/core/styles/UnstyledButton.css';
 import '@mantine/core/styles/Button.css';
-import '@mantine/core/styles/InlineInput.css';
 // SegmentedControl draws its selected box with FloatingIndicator
 import '@mantine/core/styles/FloatingIndicator.css';
 import '@mantine/core/styles/SegmentedControl.css';
-import '@mantine/core/styles/Switch.css';
 import '@fontsource/archivo/500.css';
 import '@fontsource/archivo/700.css';
 import '@fontsource/archivo/800.css';

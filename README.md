@@ -10,7 +10,7 @@ It's a PWA, so you can add it to your home screen and play it offline.
 This app was created entirely by Claude Opus 5.5 at medium effort.
 
 <p>
-  <img alt='The start screen, with settings for mode, length, prompt, time to answer, vibration and theme' src='screenshots/settings.png' width='250'>
+  <img alt='The start screen, with settings for mode, length, prompt, time to answer and theme' src='screenshots/settings.png' width='250'>
   <img alt='A game in progress, showing the word LEFT over two tap areas' src='screenshots/game.png' width='250'>
   <img alt='The history screen for rounds, with charts of accuracy and average time and a list of sessions' src='screenshots/history.png' width='250'>
 </p>

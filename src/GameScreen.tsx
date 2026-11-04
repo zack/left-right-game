@@ -2,7 +2,7 @@ import type { SessionRecord } from './history.ts';
 import type { Settings } from './settings.ts';
 import { Check, Cross } from './Marks.tsx';
 import { type Side, getNextSide, getRound } from './sequence.ts';
-import { playClick, speak, stopSpeaking, vibrate } from './sound.ts';
+import { playClick, speak, stopSpeaking } from './sound.ts';
 import { useEffect, useEffectEvent, useState } from 'react';
 
 // Timing, in milliseconds
@@ -107,8 +107,6 @@ export default function GameScreen({
     setPhase('feedback');
     if (isRight) {
       playClick();
-    } else if (settings.vibrate) {
-      vibrate();
     }
   }
 

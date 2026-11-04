@@ -108,10 +108,6 @@ body {
   min-height: max(44px, 2.5em);
 }
 
-.mantine-Switch-label {
-  color: var(--ink);
-}
-
 /* Screens other than the game */
 .screen {
   margin: 0 auto;

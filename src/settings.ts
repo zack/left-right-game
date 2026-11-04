@@ -21,7 +21,6 @@ export interface Settings {
   prompt: PromptType;
   roundLength: RoundLength;
   timeLimit: TimeLimit;
-  vibrate: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -30,7 +29,6 @@ export const DEFAULT_SETTINGS: Settings = {
   prompt: 'both',
   roundLength: 20,
   timeLimit: 0,
-  vibrate: true,
 };
 
 const STORAGE_KEY = 'left-right-settings';
@@ -84,9 +82,6 @@ export function loadSettings(): Settings {
   }
   if (isTimeLimit(raw.timeLimit)) {
     settings.timeLimit = raw.timeLimit;
-  }
-  if (typeof raw.vibrate === 'boolean') {
-    settings.vibrate = raw.vibrate;
   }
   return settings;
 }

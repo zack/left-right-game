@@ -46,10 +46,6 @@ export default function HelpScreen({ onBack }: { onBack: () => void }) {
           time runs out, it counts as wrong.
         </li>
         <li>
-          <strong>Vibrate on a wrong answer:</strong> on phones that can
-          vibrate.
-        </li>
-        <li>
           <strong>Theme:</strong> follow your device, or pick light or dark.
         </li>
       </ul>

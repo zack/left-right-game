@@ -2,7 +2,6 @@ import {
   Button,
   type MantineColorScheme,
   SegmentedControl,
-  Switch,
   useMantineColorScheme,
 } from '@mantine/core';
 import {
@@ -214,15 +213,6 @@ export default function StartScreen({
             }
           }}
           value={String(settings.timeLimit)}
-        />
-
-        <Switch
-          checked={settings.vibrate}
-          label='Vibrate on a wrong answer'
-          onChange={(event) =>
-            onChange({ vibrate: event.currentTarget.checked })
-          }
-          size='md'
         />
 
         <Choice
