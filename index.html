@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Practice telling left from right." />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#dfe8e2" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>Left Right</title>
+    <script>
+      // Set the theme before the first paint so a dark-mode player
+      // doesn't get a flash of the light page. Mantine reads the same
+      // key once it loads.
+      try {
+        var stored = localStorage.getItem('left-right-theme');
+        var dark =
+          stored === 'dark'
+          || (stored !== 'light'
+            && matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.setAttribute(
+          'data-mantine-color-scheme',
+          dark ? 'dark' : 'light',
+        );
+      } catch (error) {
+        // Storage blocked: Mantine falls back to the device setting.
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,15 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+
+# Local env files
+*.local
+
+# Logs
+*.log
+
+
+# Vercel CLI
+.vercel

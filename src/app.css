@@ -1,0 +1,398 @@
+* {
+  box-sizing: border-box;
+}
+
+/* Palette ("Chalk") */
+:root,
+[data-mantine-color-scheme='light'] {
+  --accent: #1f5c4a;
+  --accent-ink: #ffffff;
+  --bad-fill: #f9dad7;
+  --bad-ink: #a8231b;
+  --bg: #dfe8e2;
+  --good-fill: #d4f0da;
+  --good-ink: #10632a;
+  --grid: #cfdcd4;
+  --ink: #14302a;
+  --muted: #3f5a52;
+  --panel: #eef3ef;
+  --track: #cfdcd4;
+}
+
+[data-mantine-color-scheme='dark'] {
+  --accent: #f2d16b;
+  --accent-ink: #1d2b27;
+  --bad-fill: #451814;
+  --bad-ink: #ff9a8f;
+  --bg: #16221f;
+  --good-fill: #123a20;
+  --good-ink: #7fe39a;
+  --grid: #2b3d38;
+  --ink: #eef3e8;
+  --muted: #b7c7bd;
+  --panel: #1f2e2a;
+  --track: #2b3d38;
+}
+
+/* Mantine, in the palette */
+:root {
+  --mantine-color-body: var(--bg);
+  --mantine-color-text: var(--ink);
+  --mantine-primary-color-contrast: var(--accent-ink);
+  --mantine-primary-color-filled: var(--accent);
+  --mantine-primary-color-filled-hover: var(--accent);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  margin: 0;
+}
+
+.visually-hidden {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* The setting groups are fieldsets so the legend names each set of radio
+   buttons. They shouldn't look like boxes. */
+.field {
+  border: 0;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+}
+
+.field legend {
+  padding: 0;
+}
+
+.mantine-SegmentedControl-root {
+  background: var(--track);
+}
+
+/* The selected choice gets an accent edge, so it stands out in dark mode too,
+   where a lighter fill alone barely shows against the track. */
+.mantine-SegmentedControl-indicator {
+  background: var(--panel);
+  box-shadow: inset 0 0 0 2px var(--accent);
+}
+
+.mantine-SegmentedControl-label {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.mantine-SegmentedControl-label[data-active] {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.mantine-Button-root[data-variant='default'] {
+  background: var(--panel);
+  border-color: var(--muted);
+  color: var(--ink);
+}
+
+.mantine-Button-root {
+  min-height: max(44px, 2.5em);
+}
+
+.mantine-Switch-label {
+  color: var(--ink);
+}
+
+/* Screens other than the game */
+.screen {
+  margin: 0 auto;
+  max-width: 28rem;
+  padding: 1.25rem 1rem 2rem;
+}
+
+.title {
+  font-size: clamp(2.25rem, 11vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0.5rem 0 1.5rem;
+}
+
+/* Headings only take focus so a screen reader starts reading at the top of
+   each new screen. They aren't controls, so they don't need a ring. */
+.title:focus {
+  outline: none;
+}
+
+.section-heading {
+  font-size: 1.125rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.start .fields {
+  margin-top: 0;
+}
+
+.field-label {
+  font-weight: 700;
+  margin-bottom: 0.375rem;
+}
+
+.field-help {
+  color: var(--muted);
+  font-size: 0.875rem;
+  margin: 0.375rem 0 0;
+}
+
+/* Mantine draws filled buttons with white text, which is unreadable on the
+   dark theme's yellow. */
+.start-button {
+  color: var(--accent-ink);
+  font-weight: 800;
+}
+
+.best {
+  color: var(--muted);
+  margin: 0;
+  text-align: center;
+}
+
+.nav-buttons {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* Summary */
+.results {
+  margin: 0;
+}
+
+.result-row {
+  border-bottom: 1px solid var(--track);
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+}
+
+.result-row dt {
+  color: var(--muted);
+}
+
+.result-row dd {
+  font-weight: 700;
+  margin: 0;
+  text-align: right;
+}
+
+.new-best {
+  color: var(--accent);
+}
+
+[data-mantine-color-scheme='light'] .new-best {
+  color: var(--good-ink);
+}
+
+/* History */
+.chart {
+  margin: 1.25rem 0 0;
+}
+
+.chart-title {
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.chart-tooltip {
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  border-radius: 0.5rem;
+  color: var(--ink);
+  font-size: 0.875rem;
+  padding: 0.5rem 0.625rem;
+}
+
+.chart-tooltip-value {
+  font-weight: 700;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.sessions {
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  width: 100%;
+}
+
+.sessions th,
+.sessions td {
+  border-bottom: 1px solid var(--track);
+  padding: 0.5rem 0.375rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.confirm p {
+  margin: 0 0 0.75rem;
+}
+
+/* Help */
+.help ul {
+  padding-left: 1.25rem;
+}
+
+.help li {
+  margin-bottom: 0.5rem;
+}
+
+/* Game */
+.game {
+  display: flex;
+  flex-direction: column;
+  height: var(--visible-height, 100dvh);
+  overflow: hidden;
+  touch-action: manipulation;
+  user-select: none;
+}
+
+.top-bar {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  height: 3rem;
+  padding: 0 1rem;
+}
+
+.status {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.limit {
+  background: var(--track);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  flex: 1;
+  height: 0.5rem;
+  overflow: hidden;
+}
+
+.limit-fill {
+  animation-fill-mode: forwards;
+  animation-name: limit;
+  animation-timing-function: linear;
+  background: var(--accent);
+  display: block;
+  height: 100%;
+}
+
+@keyframes limit {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0;
+  }
+}
+
+.quit {
+  background: none;
+  border: 1px solid var(--muted);
+  border-radius: 0.5rem;
+  color: var(--ink);
+  cursor: pointer;
+  font: inherit;
+  margin-left: auto;
+  min-height: 2.25rem;
+  padding: 0 0.875rem;
+}
+
+/* The middle column is the dead strip: a tap there counts for nothing, so a
+   thumb that lands on the line between the halves isn't marked wrong. */
+.halves {
+  display: grid;
+  flex: 1;
+  grid-template-columns: 1fr min(10%, 6rem) 1fr;
+  padding: 0 0.75rem 0.75rem;
+  position: relative;
+}
+
+.half {
+  align-items: center;
+  background: var(--panel);
+  /* Invisible normally, but forced colors draws it, since it drops fills. */
+  border: 2px solid transparent;
+  border-radius: 1.25rem;
+  color: var(--ink);
+  display: flex;
+  justify-content: center;
+}
+
+.half.correct,
+.half.answer {
+  background: var(--good-fill);
+  color: var(--good-ink);
+}
+
+.half.wrong {
+  background: var(--bad-fill);
+  color: var(--bad-ink);
+}
+
+.mark {
+  height: min(30vw, 30vh);
+  width: min(30vw, 30vh);
+}
+
+.answer {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  font-size: clamp(1.5rem, 8vw, 3rem);
+  font-weight: 800;
+}
+
+.answer .mark {
+  height: min(18vw, 18vh);
+  width: min(18vw, 18vh);
+}
+
+.word {
+  font-size: clamp(3.5rem, 20vmin, 9rem);
+  font-weight: 800;
+  left: 50%;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Forced colors drops background fills, which would leave the time-limit bar
+   empty. */
+@media (forced-colors: active) {
+  .limit-fill {
+    background: CanvasText;
+    forced-color-adjust: none;
+  }
+}
