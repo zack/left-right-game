@@ -53,8 +53,10 @@ export default function HelpScreen({ onBack }: { onBack: () => void }) {
       <h2 className='section-heading'>Leaving a game</h2>
       <p>
         There’s no pause. If you switch apps or lock the screen during a game,
-        that game is thrown away and isn’t saved. Quit does the same. In
-        Endless, Stop ends the game and saves it.
+        that game is thrown away and isn’t saved. Quit does the same; tap it
+        twice so a stray tap doesn’t end your game. The Escape key and your
+        browser’s Back button quit too. In Endless, Stop ends the game and saves
+        it.
       </p>
 
       <h2 className='section-heading'>Your history</h2>

@@ -88,6 +88,7 @@ function Choice({
 export default function StartScreen({
   best,
   canSpeak,
+  leftMidGame,
   onChange,
   onHelp,
   onHistory,
@@ -96,6 +97,7 @@ export default function StartScreen({
 }: {
   best: number | null;
   canSpeak: boolean;
+  leftMidGame: boolean; // the last game ended because the player left the app
   onChange: (change: Partial<Settings>) => void;
   onHelp: () => void;
   onHistory: () => void;
@@ -114,6 +116,12 @@ export default function StartScreen({
       <h1 className='title' ref={headingRef} tabIndex={-1}>
         Left Right
       </h1>
+      <p className='intro'>Tap the side it says, as fast as you can.</p>
+      {leftMidGame && (
+        <p className='notice'>
+          Your last game was stopped when you left the app.
+        </p>
+      )}
 
       <div className='fields'>
         <div>
@@ -215,19 +223,6 @@ export default function StartScreen({
           value={String(settings.timeLimit)}
         />
 
-        <Choice
-          data={THEMES}
-          id='theme'
-          label='Theme'
-          onChange={(value) => {
-            const scheme = THEMES.find((item) => item.value === value);
-            if (scheme) {
-              setColorScheme(scheme.value);
-            }
-          }}
-          value={colorScheme}
-        />
-
         <Button className='start-button' fullWidth onClick={onStart} size='xl'>
           Start
         </Button>
@@ -240,6 +235,19 @@ export default function StartScreen({
             Help
           </Button>
         </div>
+
+        <Choice
+          data={THEMES}
+          id='theme'
+          label='Theme'
+          onChange={(value) => {
+            const scheme = THEMES.find((item) => item.value === value);
+            if (scheme) {
+              setColorScheme(scheme.value);
+            }
+          }}
+          value={colorScheme}
+        />
       </div>
     </main>
   );

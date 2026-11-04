@@ -49,6 +49,9 @@ function ChartTooltip({
 
 // One measure per chart. Accuracy, milliseconds and counts don't share a
 // scale, so they each get their own small chart rather than a second axis.
+// The charts are hidden from screen readers, and Recharts' keyboard layer is
+// off: the sessions table below holds the same numbers in a form a screen
+// reader can use, and the charts were only unnamed extra tab stops.
 export default function HistoryChart({
   points,
   title,
@@ -59,16 +62,24 @@ export default function HistoryChart({
   unit: string;
 }) {
   return (
-    <figure className='chart'>
+    <figure aria-hidden='true' className='chart'>
       <figcaption className='chart-title'>{title}</figcaption>
-      <ResponsiveContainer height={160} width='100%'>
+      <ResponsiveContainer height={180} width='100%'>
         <LineChart
+          accessibilityLayer={false}
           data={points}
-          margin={{ bottom: 0, left: 0, right: 12, top: 8 }}
+          margin={{ bottom: 16, left: 0, right: 12, top: 8 }}
         >
           <CartesianGrid stroke='var(--grid)' vertical={false} />
           <XAxis
             dataKey='number'
+            label={{
+              fill: 'var(--muted)',
+              fontSize: 12,
+              offset: -10,
+              position: 'insideBottom',
+              value: 'Session',
+            }}
             stroke='var(--muted)'
             tick={{ fill: 'var(--muted)', fontSize: 12 }}
             tickLine={false}

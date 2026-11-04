@@ -33,22 +33,42 @@ function getResultText(record: SessionRecord): string {
   }
 }
 
+type FocusTarget = 'cancel' | 'clear' | 'empty' | null;
+
 export default function HistoryScreen({
   history,
+  initialMode,
   onBack,
   onCleared,
 }: {
   history: SessionRecord[];
+  initialMode: Mode; // the mode the player last played
   onBack: () => void;
   onCleared: () => void;
 }) {
-  const [mode, setMode] = useState<Mode>('round');
+  const [mode, setMode] = useState(initialMode);
   const [confirming, setConfirming] = useState(false);
+  // The clear buttons and the confirm question replace each other, which
+  // would drop focus on the page body. This says where it goes next.
+  const [focusTarget, setFocusTarget] = useState<FocusTarget>(null);
   const headingRef = useRef<HTMLHeadingElement>(null);
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const clearRef = useRef<HTMLButtonElement>(null);
+  const emptyRef = useRef<HTMLParagraphElement>(null);
 
   useEffect(() => {
     headingRef.current?.focus();
   }, []);
+
+  useEffect(() => {
+    if (focusTarget === 'cancel') {
+      cancelRef.current?.focus();
+    } else if (focusTarget === 'clear') {
+      clearRef.current?.focus();
+    } else if (focusTarget === 'empty') {
+      emptyRef.current?.focus();
+    }
+  }, [focusTarget]);
 
   const sessions = history.filter((record) => record.mode === mode);
   function getPoints(getValue: (record: SessionRecord) => number | null) {
@@ -95,6 +115,7 @@ export default function HistoryScreen({
   function handleClear() {
     clearHistory();
     setConfirming(false);
+    setFocusTarget('empty');
     onCleared();
   }
 
@@ -103,7 +124,7 @@ export default function HistoryScreen({
       <h1 className='title' ref={headingRef} tabIndex={-1}>
         History
       </h1>
-      <p className='field-help'>Kept on this phone only.</p>
+      <p className='field-help'>Kept on this device only.</p>
 
       <fieldset className='field'>
         <legend className='field-label'>Mode</legend>
@@ -122,7 +143,9 @@ export default function HistoryScreen({
       </fieldset>
 
       {sessions.length === 0 ? (
-        <p>No {MODE_LABELS[mode].toLowerCase()} sessions yet.</p>
+        <p className='empty' ref={emptyRef} tabIndex={-1}>
+          No {MODE_LABELS[mode].toLowerCase()} sessions yet.
+        </p>
       ) : (
         <>
           {charts}
@@ -152,7 +175,14 @@ export default function HistoryScreen({
 
       <div className='fields'>
         {history.length > 0 && !confirming && (
-          <Button onClick={() => setConfirming(true)} variant='default'>
+          <Button
+            onClick={() => {
+              setConfirming(true);
+              setFocusTarget('cancel');
+            }}
+            ref={clearRef}
+            variant='default'
+          >
             Clear history
           </Button>
         )}
@@ -163,10 +193,17 @@ export default function HistoryScreen({
               undone.
             </p>
             <div className='nav-buttons'>
-              <Button color='red' onClick={handleClear}>
+              <Button className='danger-button' onClick={handleClear}>
                 Clear
               </Button>
-              <Button onClick={() => setConfirming(false)} variant='default'>
+              <Button
+                onClick={() => {
+                  setConfirming(false);
+                  setFocusTarget('clear');
+                }}
+                ref={cancelRef}
+                variant='default'
+              >
                 Cancel
               </Button>
             </div>

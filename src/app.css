@@ -77,6 +77,11 @@ body {
   padding: 0;
 }
 
+/* Lets a row of choices stack when enlarged text no longer fits across. */
+.field {
+  container-type: inline-size;
+}
+
 .mantine-SegmentedControl-root {
   background: var(--track);
 }
@@ -88,9 +93,47 @@ body {
   box-shadow: inset 0 0 0 2px var(--accent);
 }
 
+/* Mantine's choices are 28px tall, which is small for a thumb. */
 .mantine-SegmentedControl-label {
+  align-items: center;
   color: var(--muted);
+  display: flex;
   font-weight: 500;
+  justify-content: center;
+  min-height: max(44px, 2.5em);
+  white-space: normal;
+}
+
+/* Mantine's focus ring is the same color as the selected box, so focus on
+   the selected choice barely showed. An ink ring a little inside the box
+   looks different from both. It sits inside because the control clips
+   anything drawn outside it. */
+.mantine-SegmentedControl-input:focus-visible
+  + .mantine-SegmentedControl-label {
+  outline: 3px solid var(--ink);
+  outline-offset: -6px;
+}
+
+@container (max-width: 17em) {
+  .mantine-SegmentedControl-root {
+    flex-direction: column;
+  }
+
+  .mantine-SegmentedControl-control {
+    width: 100%;
+  }
+
+  .mantine-SegmentedControl-control::before {
+    display: none;
+  }
+}
+
+/* Forced colors drops box shadows, which would leave nothing to show the
+   selected choice. */
+@media (forced-colors: active) {
+  .mantine-SegmentedControl-indicator {
+    border: 2px solid Highlight;
+  }
 }
 
 .mantine-SegmentedControl-label[data-active] {
@@ -104,8 +147,36 @@ body {
   color: var(--ink);
 }
 
+/* Mantine fixes button height and keeps labels on one line, which cuts
+   labels off when text is enlarged. */
 .mantine-Button-root {
+  height: auto;
   min-height: max(44px, 2.5em);
+  padding-block: 0.5rem;
+}
+
+.mantine-Button-label {
+  text-align: center;
+  white-space: normal;
+}
+
+/* Mantine's red is 3.28:1 with white text. */
+.danger-button,
+.danger-button:hover {
+  background: #a8231b;
+  color: #ffffff;
+}
+
+.intro {
+  margin: -0.75rem 0 1.5rem;
+}
+
+.notice {
+  background: var(--panel);
+  border: 1px solid var(--muted);
+  border-radius: 0.5rem;
+  margin: 0 0 1.25rem;
+  padding: 0.625rem 0.75rem;
 }
 
 /* Screens other than the game */
@@ -169,10 +240,11 @@ body {
   text-align: center;
 }
 
+/* Side by side, until enlarged text no longer fits two across. */
 .nav-buttons {
   display: grid;
   gap: 1rem;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(9em, 1fr));
 }
 
 /* Summary */
@@ -270,25 +342,39 @@ body {
   user-select: none;
 }
 
+.game-area {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* The game area only takes focus so a screen reader hands it the arrow
+   keys. A ring around the whole screen would just be noise. */
+.game-area:focus {
+  outline: none;
+}
+
+/* Wraps rather than pushing Quit off the screen when text is enlarged. */
 .top-bar {
   align-items: center;
   display: flex;
-  gap: 1rem;
-  height: 3rem;
-  padding: 0 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  min-height: 3rem;
+  padding: 0.375rem 1rem;
 }
 
 .status {
   font-variant-numeric: tabular-nums;
   font-weight: 700;
-  white-space: nowrap;
 }
 
 .limit {
   background: var(--track);
   border: 1px solid transparent;
   border-radius: 999px;
-  flex: 1;
+  flex: 1 1 6rem;
   height: 0.5rem;
   overflow: hidden;
 }
@@ -374,7 +460,8 @@ body {
 }
 
 .word {
-  font-size: clamp(3.5rem, 20vmin, 9rem);
+  /* No rem floor, so enlarged text can't push the word past the screen. */
+  font-size: min(20vmin, 9rem);
   font-weight: 800;
   left: 50%;
   letter-spacing: 0.02em;
@@ -390,5 +477,21 @@ body {
   .limit-fill {
     background: CanvasText;
     forced-color-adjust: none;
+  }
+}
+
+/* On short phones, tighten the start screen so Start fits without a
+   scroll. */
+@media (max-height: 640px) {
+  .start .title {
+    margin: 0.25rem 0 0.75rem;
+  }
+
+  .start .intro {
+    margin: -0.25rem 0 0.75rem;
+  }
+
+  .start .fields {
+    gap: 0.75rem;
   }
 }

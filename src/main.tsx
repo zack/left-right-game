@@ -32,6 +32,7 @@ const THEME_KEY = 'left-right-theme';
 const theme = createTheme({
   fontFamily: "'Archivo', sans-serif",
   headings: { fontFamily: "'Archivo', sans-serif" },
+  respectReducedMotion: true,
 });
 
 const root = document.getElementById('root');

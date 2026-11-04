@@ -41,7 +41,7 @@ export default function SummaryScreen({
   }
   rows.push(['Accuracy', `${accuracy}%`]);
   rows.push([
-    'Average time',
+    'Average time (right answers)',
     record.averageMs === null ? 'None right' : `${record.averageMs} ms`,
   ]);
   if (record.mode === 'endless') {

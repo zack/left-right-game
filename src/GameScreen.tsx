@@ -3,13 +3,14 @@ import type { Settings } from './settings.ts';
 import { Check, Cross } from './Marks.tsx';
 import { type Side, getNextSide, getRound } from './sequence.ts';
 import { playClick, speak, stopSpeaking } from './sound.ts';
-import { useEffect, useEffectEvent, useState } from 'react';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 
 // Timing, in milliseconds
 const FIRST_PROMPT_DELAY = 800;
 const RIGHT_FEEDBACK = 500;
 const WRONG_FEEDBACK = 1000;
 const CLOCK_TICK = 200;
+const QUIT_CONFIRM_TIME = 3000;
 
 type Phase = 'feedback' | 'pause' | 'prompt';
 
@@ -36,6 +37,16 @@ const EMPTY_STATS: Stats = {
   total: 0,
 };
 
+function getStopLabel(mode: Settings['mode'], quitArmed: boolean): string {
+  if (mode === 'endless') {
+    return 'Stop';
+  } else if (quitArmed) {
+    return 'Tap again to quit';
+  } else {
+    return 'Quit';
+  }
+}
+
 function formatClock(ms: number): string {
   const seconds = Math.max(0, Math.ceil(ms / 1000));
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
@@ -47,7 +58,7 @@ export default function GameScreen({
   settings,
   writtenFallback,
 }: {
-  onAbandon: () => void;
+  onAbandon: (reason: 'left' | 'quit') => void;
   onFinish: (record: SessionRecord) => void;
   settings: Settings;
   writtenFallback: boolean; // the browser can’t speak, so always show words
@@ -66,6 +77,8 @@ export default function GameScreen({
   const [clockNow, setClockNow] = useState(() => performance.now());
   const [finished, setFinished] = useState(false);
   const [speechFailed, setSpeechFailed] = useState(false);
+  const [quitArmed, setQuitArmed] = useState(false);
+  const gameRef = useRef<HTMLDivElement>(null);
 
   const side = sides[index];
   const spoken = settings.prompt !== 'written' && !writtenFallback;
@@ -125,12 +138,22 @@ export default function GameScreen({
     setPhase('prompt');
   }
 
-  function handleStop() {
+  function stop() {
     stopSpeaking();
     if (settings.mode === 'endless' && stats.total > 0) {
       onFinish(getRecord(stats));
     } else {
-      onAbandon();
+      onAbandon('quit');
+    }
+  }
+
+  // Quit throws a round away and sits right above the right tap area, so it
+  // takes a second tap. Stop in Endless saves the game, so it doesn't.
+  function handleStopButton() {
+    if (settings.mode === 'endless' || quitArmed) {
+      stop();
+    } else {
+      setQuitArmed(true);
     }
   }
 
@@ -224,7 +247,10 @@ export default function GameScreen({
     if (event.repeat) {
       return;
     }
-    if (event.key === 'ArrowLeft') {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      stop();
+    } else if (event.key === 'ArrowLeft') {
       event.preventDefault();
       grade('left', event.timeStamp);
     } else if (event.key === 'ArrowRight') {
@@ -240,7 +266,7 @@ export default function GameScreen({
   // Leaving the app throws the session away. There's no pause.
   const leave = useEffectEvent(() => {
     stopSpeaking();
-    onAbandon();
+    onAbandon('left');
   });
   useEffect(() => {
     function handleVisibility() {
@@ -254,6 +280,21 @@ export default function GameScreen({
   }, []);
 
   useEffect(() => stopSpeaking, []);
+
+  useEffect(() => {
+    if (!quitArmed) {
+      return undefined;
+    }
+    const timer = setTimeout(() => setQuitArmed(false), QUIT_CONFIRM_TIME);
+    return () => clearTimeout(timer);
+  }, [quitArmed]);
+
+  // Focus goes to the game area, which is marked as an application so that
+  // a screen reader passes the arrow keys through to the game instead of
+  // using them to read the page.
+  useEffect(() => {
+    gameRef.current?.focus();
+  }, []);
 
   function getHalfState(half: Side): string {
     if (!feedback) {
@@ -288,6 +329,25 @@ export default function GameScreen({
     );
   }
 
+  // What a screen reader hears. The word only goes here when nothing speaks
+  // it. Each message gets its own key, so it goes into the live region as a
+  // new element and is announced even when the text repeats ("Right",
+  // "Right").
+  let announcement = null;
+  if (phase === 'feedback' && feedback) {
+    let text;
+    if (feedback.tapped === feedback.answer) {
+      text = 'Right';
+    } else if (feedback.tapped) {
+      text = `Wrong, it was ${feedback.answer}`;
+    } else {
+      text = `Time’s up, it was ${feedback.answer}`;
+    }
+    announcement = <p key={`feedback-${index}`}>{text}</p>;
+  } else if (phase === 'prompt' && (!spoken || speechFailed)) {
+    announcement = <p key={`prompt-${index}`}>{side}</p>;
+  }
+
   let status;
   if (settings.mode === 'round') {
     status = `${Math.min(index + 1, sides.length)} / ${sides.length}`;
@@ -304,33 +364,45 @@ export default function GameScreen({
   return (
     <main className='game'>
       <h1 className='visually-hidden'>Left Right</h1>
-      <p className='visually-hidden'>
-        Press the left or right arrow key to answer.
-      </p>
-      <div className='top-bar'>
-        <span className='status'>{status}</span>
-        {settings.timeLimit > 0 && (
-          <span className='limit'>
-            {phase === 'prompt' && startedAt !== null && (
-              <span
-                className='limit-fill'
-                key={index}
-                style={{ animationDuration: `${settings.timeLimit}ms` }}
-              />
-            )}
-          </span>
-        )}
-        <button className='quit' onClick={handleStop} type='button'>
-          {settings.mode === 'endless' ? 'Stop' : 'Quit'}
-        </button>
-      </div>
-      <div aria-hidden='true' className='halves'>
-        {renderHalf('left')}
-        <div className='strip' />
-        {renderHalf('right')}
-        {phase === 'prompt' && (written || speechFailed) && (
-          <div className='word'>{side.toUpperCase()}</div>
-        )}
+      <div
+        aria-label='Left Right game. Press the left or right arrow key to answer. Escape quits.'
+        className='game-area'
+        ref={gameRef}
+        role='application'
+        tabIndex={-1}
+      >
+        <div className='top-bar'>
+          <span className='status'>{status}</span>
+          {settings.timeLimit > 0 && (
+            <span className='limit'>
+              {phase === 'prompt' && startedAt !== null && (
+                <span
+                  className='limit-fill'
+                  key={index}
+                  style={{ animationDuration: `${settings.timeLimit}ms` }}
+                />
+              )}
+            </span>
+          )}
+          <button className='quit' onClick={handleStopButton} type='button'>
+            {getStopLabel(settings.mode, quitArmed)}
+          </button>
+        </div>
+        <div aria-hidden='true' className='halves'>
+          {renderHalf('left')}
+          <div className='strip' />
+          {renderHalf('right')}
+          {phase === 'prompt' && (written || speechFailed) && (
+            <div className='word'>{side.toUpperCase()}</div>
+          )}
+        </div>
+        <div
+          aria-atomic='true'
+          aria-live='assertive'
+          className='visually-hidden'
+        >
+          {announcement}
+        </div>
       </div>
     </main>
   );
